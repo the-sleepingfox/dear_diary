@@ -10,28 +10,47 @@ class GetRoutes(APIView):
     def get(self, request):
         routes=[
             {'GET': 'api/'},
-            {'GET': 'api/entries/'},
+            {'GET': 'api/entry/'},
+            {'GET': 'api/entry/id/'},
+            {'POST': 'api/entry/new'},
+            # {'PUT': 'api/entry/<str:pk>/'},
+            {'DELETE': 'api/entry/id/'},
         ]
         return Response(routes)
 
+class NewEntry(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        serializer = EntrySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(owner= request.user)
+            return Response(serializer.data, status=201)
+        else:
+            return Response(serializer.errors, status=400)
 class EntryList(APIView):
-    permission_classes= [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        entries= Entry.objects.all()
-        serializer= EntrySerializer(entries, many= True)
+        entries = Entry.objects.all()
+        serializer = EntrySerializer(entries, many=True)
         return Response(serializer.data)
     
 class SingleEntry(APIView):
-    permission_classes= [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
         try:
-            entry= Entry.objects.get(pk= pk)
+            entry = Entry.objects.get(pk= pk)
             serializer= EntrySerializer(entry)
-            return Response(serializer.data, status= 200)
+            return Response(serializer.data, status=200)
         except Entry.DoesNotExist:
-            return Response({'error': 'Entry does not exist'}, status= 404)
+            return Response({'error': 'Entry does not exist'}, status=404)
         
-    def put(self, request, pk):
-        pass
+
+    def delete(self, request, pk):
+        try:
+            entry = Entry.objects.get(pk= pk)
+            entry.delete()
+            return Response({'message': f'Entry with {entry.heading} deleted successfully'}, status=204)
+        except Entry.DoesNotExist:
+            return Response({'error': 'Entry does not exist'}, status=404)
