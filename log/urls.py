@@ -11,7 +11,7 @@ urlpatterns= [
 
     path('get-everything/', GetEveryThing.as_view(), name= 'get_everything'),
     path('', GetRoutes.as_view(), name= 'get_url'),
-    path('entry/new', NewEntry.as_view(), name= 'new_entry'),
+    path('entry/new/', NewEntry.as_view(), name= 'new_entry'),
     path('entry/', EntryList.as_view(), name= 'entry_list'),
     path('entry/<str:pk>/', SingleEntry.as_view(), name= 'single_entry'),
 ]
