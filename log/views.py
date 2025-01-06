@@ -3,9 +3,16 @@ from .models import Entry
 from .serializers import EntrySerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 
+
+class GetEveryThing(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        entries= Entry.objects.all()
+        serializer= EntrySerializer(entries, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class GetRoutes(APIView):
     def get(self, request):
@@ -34,7 +41,7 @@ class EntryList(APIView):
 
     def get(self, request):
         try:
-            entries = Entry.objects.filter(owner= request.user)
+            entries = Entry.objects.get(owner= request.user)
             serializer = EntrySerializer(entries, many=True)
             return Response(serializer.data)
         except Entry.DoesNotExist:

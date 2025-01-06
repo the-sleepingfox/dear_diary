@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import GetRoutes, NewEntry, EntryList, SingleEntry
+from .views import GetRoutes, NewEntry, EntryList, SingleEntry, GetEveryThing
 from rest_framework_simplejwt.views import(
     TokenObtainPairView,
     TokenRefreshView,
@@ -9,6 +9,7 @@ urlpatterns= [
     path('login/', TokenObtainPairView.as_view(), name= 'token_obtain_pair'),
     path('refresh/', TokenRefreshView.as_view(), name= 'token_refresh'),
 
+    path('get-everything/', GetEveryThing.as_view(), name= 'get_everything'),
     path('', GetRoutes.as_view(), name= 'get_url'),
     path('entry/new', NewEntry.as_view(), name= 'new_entry'),
     path('entry/', EntryList.as_view(), name= 'entry_list'),
